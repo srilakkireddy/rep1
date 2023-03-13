@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="d5a7427b-283f-4538-9da3-1c4d56be4a16" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<flow name="srilakshmi-muleFlow" doc:id="f963270d-aac6-4716-9b63-2b5dabc002cd" >
+		<http:listener doc:name="Listener" doc:id="f75b99af-d09a-4fe2-8bcd-1055a566146b" config-ref="HTTP_Listener_config" path="/Srilakshmi"/>
+		<set-payload value='#["Mule run by srilakshmi"]' doc:name="Set Payload" doc:id="653f9a08-f585-4296-8473-fd505c68ba96" />
+		<logger level="INFO" doc:name="Logger" doc:id="64db7f34-e26c-4c0d-a77c-bfe35e575fd9" message="#[payload]"/>
+	</flow>
+</mule>
