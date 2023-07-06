@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="9df6a41c-b937-480b-b243-d062350ff05d" >
+		<http:listener-connection host="localhost" port="8081" />
+	</http:listener-config>
+	<flow name="calculator-3rdprojectFlow" doc:id="a9326dcb-5b66-4ed5-a009-6b10cecd9c75" >
+		<http:listener doc:name="Listener" doc:id="547a0900-e08b-41ee-b44a-43e23253706f" config-ref="HTTP_Listener_config" path="/calculatordemo"/>
+		<logger level="INFO" doc:name="Logger" doc:id="5d86a658-9c92-4b90-b73b-9a88a8bb8464" message="start of the flow"/>
+		<set-variable value="#[attributes.queryParams.number1]" doc:name="Number1" doc:id="8444373a-0bac-43ef-8195-9d8b75850d53" variableName="number1"/>
+		<set-variable value="#[attributes.queryParams.number2]" doc:name="Number 2" doc:id="847b843f-38a2-4109-96f1-dd688ed42360" variableName="number2"/>
+		<set-variable value="#[attributes.queryParams.operation]" doc:name="Operation" doc:id="2e7e578f-6cc2-41e3-969a-301d04f14929" variableName="operation"/>
+		<choice doc:name="Choice" doc:id="582657b6-04ac-4d65-a5da-b191d9d0be07" >
+			<when expression='#[vars.operation == "Plus"]'>
+				<set-payload doc:name="Addition" doc:id="a0417f51-b4cd-4f1a-a3a9-a00dbc65e7ca" value="#[%dw 2.0&#10;output application/java&#10;---&#10;{&#10;	result: vars.number1 as Number + vars.number2 as Number&#10;}]"/>
+			</when>
+			<when expression='#[vars.operation=="subtraction"]'>
+				<set-payload value='#[%dw 2.0&#10;output application/java&#10;---&#10;{&#10;	result: vars.number1 as Number - vars.number2 as Number&#10;}]' doc:name="Subtraction" doc:id="866488b6-7968-4789-855b-30116f39f03e" />
+			</when>
+			<when expression='#[vars.operation=="multiplication"]'>
+				<set-payload doc:name="Multiplication" doc:id="b08ec854-7535-4af2-9b52-f2e6f2ac2f46" value="#[%dw 2.0&#10;output application/java&#10;---&#10;{&#10;	result: vars.number1 as Number * vars.number2 as Number&#10;}]"/>
+			</when>
+			<when expression='#[vars.operation=="division"]'>
+				<set-payload value="#[%dw 2.0&#10;output application/java&#10;---&#10;{&#10;	result: vars.number1 as Number / vars.number2 as Number&#10;}]" doc:name="Division" doc:id="711f65ea-c59d-4129-adfc-f7390baf5aad" />
+			</when>
+			<otherwise >
+				<set-payload value='#[%dw 2.0&#10;output application/java&#10;---&#10;{&#10;	result: "Please choose the operation"&#10;}]' doc:name="" doc:id="062d905a-f6ca-4a93-97ea-e8a1b2eacc10" />
+			</otherwise>
+		</choice>
+		<ee:transform doc:name="Transform Message" doc:id="061a4a5e-d828-49d0-9550-baa6d8b996b6" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="ec2277c5-7137-4c78-be9d-ae53a6469650" message="#[payload]"/>
+		<logger level="INFO" doc:name="Logger" doc:id="76f31a5d-3705-4a8f-ab8b-7b5f22e6769f" message="end of the flow"/>
+	</flow>
+</mule>
